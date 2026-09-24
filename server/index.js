@@ -5,9 +5,11 @@ import connectdb from "./src/db/connectDb.js";
 import authRoutes from "./src/routes/authRoutes.js"
 import competeRoutes from "./src/routes/competitionRoutes.js"
 import submissionRoutes from "./src/routes/submissionRoutes.js"
+import cors from "cors"
 const app = express();
 const PORT = process.env.PORT || 3000
 app.use(express.json())
+app.use(cors())
 app.use("/api/auth", authRoutes);
 app.use("/api/competitions", competeRoutes);
 app.use("/api/submissions", submissionRoutes);

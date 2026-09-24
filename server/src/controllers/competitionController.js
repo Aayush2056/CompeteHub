@@ -92,8 +92,34 @@ const getCompetitions = async (req, res) => {
       .populate("createdBy", "name email")
       .sort({ createdAt: -1 });
 
+    const now = new Date();
+
+    const updatedCompetitions = competitions.map((competition) => {
+      let currentStatus;
+
+      if (now < competition.registrationStart) {
+        currentStatus = "upcoming";
+      } else if (now <= competition.registrationDeadline) {
+        currentStatus = "registration_open";
+      } else if (now < competition.competitionDate) {
+        currentStatus = "registration_closed";
+      } else {
+        currentStatus = "completed";
+      }
+
+      const remainingSpots =
+        competition.maxParticipants -
+        competition.registeredParticipants;
+
+      return {
+        ...competition.toObject(),
+        currentStatus,
+        remainingSpots,
+      };
+    });
+
     res.status(200).json({
-      competitions,
+      competitions: updatedCompetitions,
     });
   } catch (error) {
     console.log("GET COMPETITIONS ERROR:", error);
